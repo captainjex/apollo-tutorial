@@ -1,4 +1,5 @@
 import Mongoose from 'mongoose';
+import fetch from 'node-fetch';
 import Sequelize from 'sequelize';
 import casual from 'casual';
 import _ from 'lodash';
@@ -30,6 +31,16 @@ const PostModel = db.define('post', {
   text: { type: Sequelize.STRING },
 });
 
+const FortuneCookie = {
+  getOne() {
+    return fetch('http://fortunecookieapi.herokuapp.com/v1/cookie')
+      .then(res => res.json())
+      .then(res => {
+        return res[0].fortune.message;
+      });
+  },
+};
+
 AuthorModel.hasMany(PostModel);
 PostModel.belongsTo(AuthorModel);
 
@@ -58,4 +69,4 @@ db.sync({ force: true }).then(() => {
 const Author = db.models.author;
 const Post = db.models.post;
 
-export { Author, Post, View };
+export { Author, Post, View, FortuneCookie };
